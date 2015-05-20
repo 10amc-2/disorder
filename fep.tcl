@@ -73,6 +73,7 @@ alchOutFreq         ###ALCHEMY_OUTPUT_FREQ
 alchEquilSteps      ###ALCHEMY_EQUIL_STEPS
 alchElecLambdaStart 1
 alchVdwShiftCoeff   0.05
+alchDecouple		on
 
 # -- relax structure
 alchLambda   0.0
