@@ -1,12 +1,15 @@
 # NAMD control script
 
+set outdir ###OUTDIR
+set randomseed ###RANDOM_SEED
+
 # -- structure parameters
 structure ###PSF_FILE
 coordinates ###PDB_FILE
 
 # -- variables parameters
 set temperature 298.15; # temperature in Kelvin
-set outname ###OUTPUT_PREFIX; # base name for output files
+set outname $outdir/namdrun.namdout; # base name for output files
 
 # -- forcefield parameters
 paraTypeCharmm on
@@ -27,7 +30,7 @@ rigidBonds all; # needs to be 'all' for 2 fs/step
 nonbondedFreq 1
 fullElectFrequency 1
 stepspercycle 10
-#seed #SEED; # random number generator seed
+seed $randomseed; # random number generator seed
 
 # -- simulation parameters
 langevin on; # do Langevin dynamics?
@@ -68,7 +71,7 @@ alch                on
 alchType            fep
 alchFile            ###ALCHEMY_PDB_FILE
 alchCol             B
-alchOutfile         ###ALCHEMY_OUTPUT_FILE
+alchOutfile         $outdir/fep.out
 alchOutFreq         ###ALCHEMY_OUTPUT_FREQ
 alchEquilSteps      ###ALCHEMY_EQUIL_STEPS
 alchElecLambdaStart 1
