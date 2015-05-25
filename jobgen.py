@@ -2,8 +2,6 @@
 
 import os
 import sys
-import glob
-import shutil
 import tempfile
 import logging
 
@@ -24,25 +22,44 @@ if sys.version_info[0] < 3:
     sys.exit(0)
 
 
-JOB = """#!/bin/bash
-# The name of the job, can be anything, simply used when displaying the list of running jobs
-#$ -N %s
-# Combining output/error messages into one file
-#$ -j y
-#$ -l vf=2.0G
-#$ -l h_rt=24:00:00
-# One needs to tell the queue system to use the current directory as the working directory
-# Or else the script may fail as it will execute in your top level home directory /home/username
-#$ -cwd
-# then you tell it retain all environment variables (as the default is to scrub your environment)
-#$ -V
-# request only nodes that have access to the fast /home/ironfs filesystem
-#$ -l ironfs
+#####################################################################
+# Template job from gevorg
+#####################################################################
+# #!/bin/sh
+# #$ -cwd
+# #$ -j y
+# #$ -S /bin/bash
+# #$ -pe smp 16
+# #$ -q long
+# #$ -l vf=2G
+# #$ -l hostname='gridiron*'
+# #$ -l ironfs
+# #$ -l h_rt=240:00:00
 
-# start the job with a random delay (< 1 min), so that we do not start all simulations at the exact same time.
+# echo "Got $NSLOTS slots on: " "`cat $PE_HOSTFILE`"
+
+# /home/grigoryanlab/library/bin/charmrun +p$NSLOTS /home/grigoryanlab/library/bin/namd2 namdrun_run.ctl >& namdrun_run.out
+
+# exit 0
+#####################################################################
+
+JOB = """#!/bin/bash
+#$ -N %s
+#$ -cwd
+#$ -j y
+#$ -S /bin/bash
+#$ -pe smp %s
+#$ -q medium
+#$ -l vf=2.0G
+#$ -l ironfs
+#$ -l h_rt=%s
+
+# start the job with a random delay (< 1 min), so that we do not start simulations submitted together at the exact same time.
 sleep %s
 
-/home/anthill/cs86/students/bin/namd2-linux %s &> %s
+echo "Got $NSLOTS slots on: " "`cat $PE_HOSTFILE`"
+
+/home/grigoryanlab/library/bin/charmrun +p$NSLOTS /home/grigoryanlab/library/bin/namd2 %s &> %s
 
 # create a sym link for this job's logfile in directory where it can be accessed by slackbot
 ln -s %s %s
@@ -90,7 +107,7 @@ def filebasename(fname):
     return '.'.join(fname.split('.')[:-1])
 
 
-def create_job(name, fep, joblogfile):
+def create_job(name, fep, joblogfile, time='24:00:00', cores=16):
     """Create a job (.sh) to submit to anthill and save it in ~/jobs directory.
 
     Parameters
@@ -101,6 +118,10 @@ def create_job(name, fep, joblogfile):
         fep file path
     joblogfile : string
         path of log file where the VMD simulation output should be stored.
+    time : string, optional, default 24:00:00
+        time limit for the job
+    cores : int, optional, default 16
+        number of cores to request for this job.
 
     Return
     ------
@@ -124,7 +145,7 @@ def create_job(name, fep, joblogfile):
     # start the job with a random delay (< 1 min)
     randtime = np.random.random_integers(1, 60)
 
-    f.write(JOB % (name, randtime, fep, joblogfile, joblogfile, logfile))
+    f.write(JOB % (name, cores, time, randtime, fep, joblogfile, joblogfile, logfile))
     return f.name
 
 
