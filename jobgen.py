@@ -2,6 +2,8 @@
 
 import os
 import sys
+import glob
+import shutil
 import tempfile
 import logging
 
@@ -56,6 +58,23 @@ RANDOM_INTS = [6012, 7146, 1572, 5017, 4932, 3200, 8521, 1315, 2002, 7949, 9286,
                5639, 9757, 3595,  281, 5861, 4816, 8265]
 
 
+def run_shell_command(cmd):
+    """Run a shell command and return output and error log."""
+    if isinstance(cmd, str):
+        cmd = cmd.split()
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    out, err = p.communicate()
+    if sys.version_info[0] == 3:
+        out = out.decode('utf-8')
+        err = err.decode('utf-8')
+    return out.strip(), err
+
+
+def get_vols(pdb):
+    cmd = 'sh getsize.sh %s' % pdb
+    out, err = run_shell_command(cmd)
+    return out
+
 def create_job(name, fep, joblogfile):
     dir = "%s/jobs" % BASE_DIR
     if not os.path.exists(dir):
@@ -78,10 +97,10 @@ def create_job(name, fep, joblogfile):
     return f.name
 
 
-def create_fep(templatefep, dir, run):
-    """Return the name of new fep created for given run in given directory.
+def create_fep(templatefep, dir, randomseed, pdb):
+    """Return the name of new fep created in given directory.
 
-    Create a new fep file from template file for this run of simulation.
+    Create a new fep file from template file for simulation.
     The new fep file is saved in the given `dir`.
 
     Parameters
@@ -90,22 +109,22 @@ def create_fep(templatefep, dir, run):
         path of template fep to use for the simulation.
     dir : string
         directory where the simulation files (fep.tcl, output) should be saved.
-    run : int
-        run number.
+    randomseed : int
+        use this random seed in the fep tcl.
+    pdb : string
+        pdb file name
 
     Returns
     -------
     outfile : string
         path of fep file to use for this simulation.
     """
-    if run >= len(RANDOM_INTS):
-        raise ValueError('run number %d higher than our random int set size. '
-                         'Increase the random set the set.' % run)
-    randomseed = RANDOM_INTS[run]
-    fep = os.path.join(dir, 'fep_run%d.tcl' % run)
+    fep = os.path.join(dir, 'fep.tcl')
 
     # Create a new fep file for this run, replacing the output directory
     # and random seed variables in the template fep file.
+    cellvectors = get_vols(pdb)
+    basename = os.path.basename(pdb)[:-4]
     with open(templatefep, 'r') as fin:
         with open(fep, 'w') as fout:
             for line in fin:
@@ -113,6 +132,12 @@ def create_fep(templatefep, dir, run):
                     line = 'set outdir %s;\n' % dir
                 elif line.startswith('set randomseed'):
                     line = 'set randomseed %d;\n' % randomseed
+                elif line.startswith('set psffile'):
+                    line = 'set psffile %s.psf;\n' % basename
+                elif line.startswith('set pdbfile'):
+                    line = 'set pdbfile %s.pdb;\n' % basename
+                elif line.startswith('###CELLVECTORS'):
+                    line = '%s\n' % cellvectors
                 fout.write(line)
     return fep
 
@@ -134,6 +159,11 @@ def main():
                         required=True,
                         default=None,
                         help='Template fep.tcl file')
+    parser.add_argument('--pdb',
+                        type=str,
+                        required=True,
+                        default=None,
+                        help='PDB file.')
 
     args = parser.parse_args()
 
@@ -144,8 +174,17 @@ def main():
     else:
         logging.error('Need either --nruns or --run argument.')
 
+    # TODO: check if psf file exists.
+
+
     for run in runs:
-        rundir = os.path.join(CWD, 'run%d' % run)
+        basename = os.path.basename(args.pdb)[:-4]  # without .pdb
+        rundir = os.path.join(CWD, '%s_run%d' % (basename, run))
+
+        if run >= len(RANDOM_INTS):
+            raise ValueError('run number %d higher than our random int set size. '
+                             'Increase the random set the set.' % run)
+        randomseed = RANDOM_INTS[run]
 
         # If run directory already exists, back it up so we don't overwrite it.
         if os.path.exists(rundir):
@@ -155,7 +194,13 @@ def main():
         # create new directory for this run
         os.makedirs(rundir)
 
-        fep = create_fep(args.fep, rundir, run)
+        # copy input pdb and psf files to run directory
+        files = glob.glob('%s.p*' % args.pdb[:-4])
+        for fname in files:
+            newfname = os.path.join(rundir, os.path.basename(fname))
+            shutil.copy(fname, newfname)
+
+        fep = create_fep(args.fep, rundir, randomseed, args.pdb)
 
         # Job name, to show in qstat and on slack.
         jobname = 'dis_r%d' % run
@@ -163,7 +208,12 @@ def main():
         # where we want to save output from stdout and stderr for this job.
         joblogfile = os.path.join(rundir, 'namd.stdout')
 
-        print('qsub %s' % create_job(jobname, fep, joblogfile))
+        job = create_job(jobname, fep, joblogfile)
+        print('qsub %s' % job)
+
+        # Also copy job to run dir
+        shutil.copy(job, os.path.join(rundir, os.path.basename(job)))
+
 
 
 if __name__ == "__main__":
