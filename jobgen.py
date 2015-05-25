@@ -30,7 +30,7 @@ JOB = """#!/bin/bash
 # Combining output/error messages into one file
 #$ -j y
 #$ -l vf=2.0G
-#$ -l h_rt=3:00:00
+#$ -l h_rt=24:00:00
 # One needs to tell the queue system to use the current directory as the working directory
 # Or else the script may fail as it will execute in your top level home directory /home/username
 #$ -cwd
