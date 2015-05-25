@@ -43,30 +43,6 @@ if sys.version_info[0] < 3:
 # exit 0
 #####################################################################
 
-JOB = """#!/bin/bash
-#$ -N %s
-#$ -cwd
-#$ -j y
-#$ -S /bin/bash
-#$ -pe smp %s
-#$ -q medium
-#$ -l vf=2.0G
-#$ -l ironfs
-#$ -l h_rt=%s
-
-# start the job with a random delay (< 1 min), so that we do not start simulations submitted together at the exact same time.
-sleep %s
-
-echo "Got $NSLOTS slots on: " "`cat $PE_HOSTFILE`"
-
-/home/grigoryanlab/library/bin/charmrun +p$NSLOTS /home/grigoryanlab/library/bin/namd2 %s &> %s
-
-# create a sym link for this job's logfile in directory where it can be accessed by slackbot
-ln -s %s %s
-
-exit 0
-"""
-
 BASE_DIR = os.environ['HOME']
 CWD = os.path.dirname(os.path.abspath(__file__))
 
@@ -107,6 +83,49 @@ def filebasename(fname):
     return '.'.join(fname.split('.')[:-1])
 
 
+def queue(time):
+    """Return queue for the given time in string. Time format: %H:%M:%S."""
+    if time.find(':') == -1 or len(time.split(':')) != 3:
+        raise ValueError('Time %s is not valid format: %H:%M:%S' % time)
+
+    fields = time.split(':')
+    hr = int(fields[0])
+    mn = int(fields[1])
+    sec = int(fields[2])
+    seconds = hr * 60 * 60 + mn * 60 + sec
+    if seconds <= 10800:  # 3 hour
+        return 'short'
+    elif seconds <= 86400:  # 24 hour
+        return 'medium'
+    else:
+        return 'long'
+
+
+JOB = """#!/bin/bash
+#$ -N %s
+#$ -cwd
+#$ -j y
+#$ -S /bin/bash
+#$ -pe smp %s
+#$ -l vf=2.0G
+#$ -l ironfs
+#$ -l h_rt=%s
+#$ -q %s
+
+# start the job with a random delay (< 1 min), so that we do not start simulations submitted together at the exact same time.
+sleep %s
+
+echo "Got $NSLOTS slots on: " "`cat $PE_HOSTFILE`"
+
+/home/grigoryanlab/library/bin/charmrun +p$NSLOTS /home/grigoryanlab/library/bin/namd2 %s &> %s
+
+# create a sym link for this job's logfile in directory where it can be accessed by slackbot
+ln -s %s %s
+
+exit 0
+"""
+
+
 def create_job(name, fep, joblogfile, time='24:00:00', cores=16):
     """Create a job (.sh) to submit to anthill and save it in ~/jobs directory.
 
@@ -145,7 +164,7 @@ def create_job(name, fep, joblogfile, time='24:00:00', cores=16):
     # start the job with a random delay (< 1 min)
     randtime = np.random.random_integers(1, 60)
 
-    f.write(JOB % (name, cores, time, randtime, fep, joblogfile, joblogfile, logfile))
+    f.write(JOB % (name, cores, time, queue(time), randtime, fep, joblogfile, joblogfile, logfile))
     return f.name
 
 
@@ -255,6 +274,7 @@ def main():
     for run in runs:
         # Create a directory where we store the pdb, psf, and fep.tcl files, used
         # for this simulation run.
+        # rundir name is added to job name.
         rundir = os.path.join(CWD, '%s_run%d_%s' % (basename, run, args.suffix))
 
         if run >= len(RANDOM_INTS):
