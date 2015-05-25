@@ -103,4 +103,30 @@ ATOM     99 HD12 LEU A  42       4.979  17.924  -2.315  1.00  0.00           H
 ATOM    100 HD13 LEU A  42       6.747  17.743  -2.403  1.00  0.00           H
 ATOM    101 HD21 LEU A  42       6.700  16.030  -5.735  1.00  0.00           H
 ATOM    102 HD22 LEU A  42       6.925  17.777  -5.480  1.00  0.00           H
-ATOM    103 HD23 LEU A  42      
+ATOM    103 HD23 LEU A  42       7.773  16.608  -4.438  1.00  0.00           H
+ATOM    104  N   PHE A  43       3.142  13.284  -3.399  1.00  0.00           N
+ATOM    105  CA  PHE A  43       2.782  11.874  -3.481  1.00  0.00           C
+ATOM    106  C   PHE A  43       2.388  11.488  -4.901  1.00  0.00           C
+ATOM    107  O   PHE A  43       1.958  12.331  -5.687  1.00  0.00           O
+ATOM    108  CB  PHE A  43       1.639  11.558  -2.514  1.00  0.00           C
+ATOM    109  CG  PHE A  43       0.333  12.198  -2.889  1.00  0.00           C
+ATOM    110  CD1 PHE A  43       0.066  13.515  -2.548  1.00  0.00           C
+ATOM    111  CD2 PHE A  43      -0.632  11.483  -3.584  1.00  0.00           C
+ATOM    112  CE1 PHE A  43      -1.136  14.104  -2.891  1.00  0.00           C
+ATOM    113  CE2 PHE A  43      -1.834  12.070  -3.929  1.00  0.00           C
+ATOM    114  CZ  PHE A  43      -2.086  13.381  -3.583  1.00  0.00           C
+ATOM    115  H   PHE A  43       2.764  13.929  -4.079  1.00  0.00           H
+ATOM    116  HA  PHE A  43       3.642  11.256  -3.218  1.00  0.00           H
+ATOM    117  HB2 PHE A  43       1.462  10.484  -2.481  1.00  0.00           H
+ATOM    118  HB3 PHE A  43       1.885  11.915  -1.514  1.00  0.00           H
+ATOM    119  HD1 PHE A  43       0.817  14.087  -2.003  1.00  0.00           H
+ATOM    120  HD2 PHE A  43      -0.433  10.445  -3.856  1.00  0.00           H
+ATOM    121  HE1 PHE A  43      -1.333  15.141  -2.618  1.00  0.00           H
+ATOM    122  HE2 PHE A  43      -2.583  11.497  -4.475  1.00  0.00           H
+ATOM    123  HZ  PHE A  43      -3.033  13.845  -3.855  1.00  0.00           H
+END
+
+#PDBEND
+#Creating chain P1: 2 residues from indices 1 to 25 in original file. Patches: Nter ACE, Cter CTER
+#Creating chain O1: 1 residues from indices 26 to 42 in original file. Patches: Nter none, Cter none
+#Creating chain P2: 6 residues from indices 43 to 123 in original file. Patches: Nter PROP, Cter CT3
