@@ -1,0 +1,19 @@
+package require psfgen
+topology top_all36_prot.rtf
+topology top_all36_na.rtf
+topology toppar_all36_prot_fluoro_alkanes.str
+topology toppar_all36_prot_na_combined.str
+alias residue HIS HSD
+alias atom ILE CD1 CD
+segment A {
+  auto angles dihedrals
+  pdb 2mx4_m1.pdb
+}
+patch THP1 A:37
+patch THP1 A:46
+regenerate angles
+coordpdb 2mx4_m1.pdb A
+guesscoord
+writepdb 2mx4_m1_full.pdb
+writepsf 2mx4_m1_full.psf
+exit
