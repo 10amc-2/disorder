@@ -205,7 +205,7 @@ def main():
         fep = create_fep(args.fep, rundir, randomseed, args.pdb)
 
         # Job name, to show in qstat and on slack.
-        jobname = 'dis_%s' % rundir
+        jobname = 'dis_%s' % os.path.basename(rundir)
 
         # where we want to save output from stdout and stderr for this job.
         joblogfile = os.path.join(rundir, 'namd.stdout')
