@@ -225,6 +225,18 @@ def main():
                         required=True,
                         default=None,
                         help='PDB file.')
+    parser.add_argument('--time',
+                        type=str,
+                        default='24:00:00',
+                        help='Time limit for the job. Default 24:00:00')
+    parser.add_argument('--cores',
+                        type=int,
+                        default=1,
+                        help='Number of cores to request for the job. Default 1.')
+    parser.add_argument('--suffix',
+                        type=str,
+                        default='',
+                        help='Suffix to add to job name and rundir. Default: None')
 
     args = parser.parse_args()
 
@@ -243,7 +255,7 @@ def main():
     for run in runs:
         # Create a directory where we store the pdb, psf, and fep.tcl files, used
         # for this simulation run.
-        rundir = os.path.join(CWD, '%s_run%d' % (basename, run))
+        rundir = os.path.join(CWD, '%s_run%d_%s' % (basename, run, args.suffix))
 
         if run >= len(RANDOM_INTS):
             raise ValueError('run number %d higher than our random int set size. '
@@ -271,7 +283,7 @@ def main():
         # where we want to save output from stdout and stderr for this job.
         joblogfile = os.path.join(rundir, 'namd.stdout')
 
-        job = create_job(jobname, fep, joblogfile)
+        job = create_job(jobname, fep, joblogfile, time=args.time, cores=args.cores)
         print('qsub %s' % job)
 
         # Also copy job to run dir, so we know which script we used for this simulation.
