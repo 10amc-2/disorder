@@ -7,6 +7,8 @@ import shutil
 import tempfile
 import logging
 
+from subprocess import Popen, PIPE
+
 try:
     import argparse
     import numpy as np
