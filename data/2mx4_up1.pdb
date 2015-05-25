@@ -111,30 +111,4 @@ ATOM    120  HD2 PHE A  43      -0.433  10.445  -3.856  1.00  0.00           H
 ATOM    121  HE1 PHE A  43      -1.333  15.141  -2.618  1.00  0.00           H  
 ATOM    122  HE2 PHE A  43      -2.583  11.497  -4.475  1.00  0.00           H  
 ATOM    123  HZ  PHE A  43      -3.033  13.845  -3.855  1.00  0.00           H  
-CONECT   14   26
-CONECT   26   14   27   37
-CONECT   27   26   28   30   38
-CONECT   28   27
-CONECT   28   29
-CONECT   28   29
-CONECT   28   43
-CONECT   29   28
-CONECT   29   28
-CONECT   30   27   31   32   39
-CONECT   31   30   40   41   42
-CONECT   32   30   33
-CONECT   33   32   34   35
-CONECT   33   36
-CONECT   33   36
-CONECT   34   33
-CONECT   35   33
-CONECT   36   33
-CONECT   36   33
-CONECT   37   26
-CONECT   38   27
-CONECT   39   30
-CONECT   40   31
-CONECT   41   31
-CONECT   42   31
-CONECT   43   28
 END
