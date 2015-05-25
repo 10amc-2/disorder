@@ -73,11 +73,40 @@ def run_shell_command(cmd):
 
 
 def get_vols(pdb):
-    cmd = 'sh getsize.sh %s' % pdb
+    """Return a string with cell vectors for the solvated pdb file."""
+    script = 'getsize.sh'
+    if not os.path.exists(script):
+        raise ValueError('Script getsize.sh not found in current directory.')
+    cmd = 'sh %s %s' % (script, pdb)
     out, err = run_shell_command(cmd)
+    # if out == '':
+    #     raise ValueError('Could not find cell vectors for the solvated pdb.')
     return out
 
+
+def filebasename(fname):
+    """Return file basename without extension."""
+    fname = os.path.basename(fname)
+    return '.'.join(fname.split('.')[:-1])
+
+
 def create_job(name, fep, joblogfile):
+    """Create a job (.sh) to submit to anthill and save it in ~/jobs directory.
+
+    Parameters
+    ----------
+    name : string
+        Job name prefix
+    fep : string
+        fep file path
+    joblogfile : string
+        path of log file where the VMD simulation output should be stored.
+
+    Return
+    ------
+    out : string
+        Path of the created job script.
+    """
     dir = "%s/jobs" % BASE_DIR
     if not os.path.exists(dir):
         os.makedirs(dir)
@@ -87,7 +116,7 @@ def create_job(name, fep, joblogfile):
     # Add a unix 6 charcter suffix to job name, so that slackbot can find thie
     # job's log file (using its name) when this complets and can look for
     # errors and warnings in the log file.
-    name = os.path.basename(f.name)[:-3]  # remove .sh extension
+    name = filebasename(f.name)
 
     # log file, saved in BASE_DIR, where slackbot can access it.
     logfile = os.path.join(dir, name + '.log')
@@ -99,22 +128,31 @@ def create_job(name, fep, joblogfile):
     return f.name
 
 
-def create_fep(templatefep, dir, randomseed, pdb):
+def create_fep(templatefep, dir, pdb, randomseed):
     """Return the name of new fep created in given directory.
 
     Create a new fep file from template file for simulation.
-    The new fep file is saved in the given `dir`.
+    The new fep file is saved in the directory where pdb file is saved.
+    This method expects the corresponding psf file to be in the same
+    directory as the pdb file, otherwise it raises a ValueError.
+
+    This method replaces following things in the templatefep:
+    - random seed
+    - pdb file name
+    - psf file name
+    - cell vectors : the are determined using the getsize.sh script.
 
     Parameters
     ---------
     templatefep : string
         path of template fep to use for the simulation.
     dir : string
-        directory where the simulation files (fep.tcl, output) should be saved.
+        directory where the fep file should be created.
+        This should be the run directory.
+    pdb : string
+        pdb file path.
     randomseed : int
         use this random seed in the fep tcl.
-    pdb : string
-        pdb file name
 
     Returns
     -------
@@ -126,7 +164,7 @@ def create_fep(templatefep, dir, randomseed, pdb):
     # Create a new fep file for this run, replacing the output directory
     # and random seed variables in the template fep file.
     cellvectors = get_vols(pdb)
-    basename = os.path.basename(pdb)[:-4]
+    basename = filebasename(pdb)
     with open(templatefep, 'r') as fin:
         with open(fep, 'w') as fout:
             for line in fin:
@@ -170,17 +208,20 @@ def main():
     args = parser.parse_args()
 
     if args.nruns:
-        runs = range(1, args.runs+1, 1)
+        runs = range(1, args.nruns+1, 1)
     elif args.run:
         runs = [args.run]
     else:
         logging.error('Need either --nruns or --run argument.')
 
-    # TODO: check if psf file exists.
-
+    basename = filebasename(args.pdb)  # pdb file name without the extension.
+    psffile = os.path.join(os.path.dirname(args.pdb), '%s.psf' % basename)
+    if not os.path.exists(psffile):
+        raise IOError('File %s not found' % psffile)
 
     for run in runs:
-        basename = os.path.basename(args.pdb)[:-4]  # without .pdb
+        # Create a directory where we store the pdb, psf, and fep.tcl files, used
+        # for this simulation run.
         rundir = os.path.join(CWD, '%s_run%d' % (basename, run))
 
         if run >= len(RANDOM_INTS):
@@ -196,13 +237,12 @@ def main():
         # create new directory for this run
         os.makedirs(rundir)
 
-        # copy input pdb and psf files to run directory
-        files = glob.glob('%s.p*' % args.pdb[:-4])
-        for fname in files:
+        # copy pdb and psf files to run directory
+        for fname in [args.pdb, psffile]:
             newfname = os.path.join(rundir, os.path.basename(fname))
             shutil.copy(fname, newfname)
 
-        fep = create_fep(args.fep, rundir, randomseed, args.pdb)
+        fep = create_fep(args.fep, rundir, args.pdb, randomseed)
 
         # Job name, to show in qstat and on slack.
         jobname = 'dis_%s' % os.path.basename(rundir)
@@ -213,10 +253,8 @@ def main():
         job = create_job(jobname, fep, joblogfile)
         print('qsub %s' % job)
 
-        # Also copy job to run dir
+        # Also copy job to run dir, so we know which script we used for this simulation.
         shutil.copy(job, os.path.join(rundir, os.path.basename(job)))
-
-
 
 if __name__ == "__main__":
     main()
