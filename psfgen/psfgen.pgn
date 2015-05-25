@@ -8,6 +8,8 @@ alias atom ILE CD1 CD
 segment A {
   auto angles dihedrals
   pdb 2mx4_m1.pdb
+  first ACE
+  last CT2
 }
 patch THP1 A:37
 patch THP1 A:46
