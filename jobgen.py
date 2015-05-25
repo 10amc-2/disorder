@@ -30,7 +30,7 @@ JOB = """#!/bin/bash
 # Combining output/error messages into one file
 #$ -j y
 #$ -l vf=2.0G
-#$ -l h_rt=72:00:00
+#$ -l h_rt=3:00:00
 # One needs to tell the queue system to use the current directory as the working directory
 # Or else the script may fail as it will execute in your top level home directory /home/username
 #$ -cwd
@@ -205,7 +205,7 @@ def main():
         fep = create_fep(args.fep, rundir, randomseed, args.pdb)
 
         # Job name, to show in qstat and on slack.
-        jobname = 'dis_r%d' % run
+        jobname = 'dis_%s' % rundir
 
         # where we want to save output from stdout and stderr for this job.
         joblogfile = os.path.join(rundir, 'namd.stdout')
