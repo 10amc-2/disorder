@@ -111,6 +111,7 @@ JOB = """#!/bin/bash
 #$ -l ironfs
 #$ -l h_rt=%s
 #$ -q %s
+%s
 
 # start the job with a random delay (< 1 min), so that we do not start simulations submitted together at the exact same time.
 sleep %s
@@ -126,7 +127,7 @@ exit 0
 """
 
 
-def create_job(name, fep, joblogfile, time='24:00:00', cores=16):
+def create_job(name, fep, joblogfile, time='24:00:00', cores=16, arid=None):
     """Create a job (.sh) to submit to anthill and save it in ~/jobs directory.
 
     Parameters
@@ -141,6 +142,8 @@ def create_job(name, fep, joblogfile, time='24:00:00', cores=16):
         time limit for the job
     cores : int, optional, default 16
         number of cores to request for this job.
+    arid : int, optional, default None
+        advanced reservation ID, if we have one.
 
     Return
     ------
@@ -164,7 +167,12 @@ def create_job(name, fep, joblogfile, time='24:00:00', cores=16):
     # start the job with a random delay (< 1 min)
     randtime = np.random.random_integers(1, 60)
 
-    f.write(JOB % (name, cores, time, queue(time), randtime, fep, joblogfile, joblogfile, logfile))
+    if arid:
+        ar = '#$ -ar %d' % arid
+    else:
+        ar = ''
+
+    f.write(JOB % (name, cores, time, queue(time), ar, randtime, fep, joblogfile, joblogfile, logfile))
     return f.name
 
 
@@ -256,6 +264,10 @@ def main():
                         type=str,
                         default='',
                         help='Suffix to add to job name and rundir. Default: None')
+    parser.add_argument('--arid',
+                        type=int,
+                        default=None,
+                        help='advanced reservatoin ID.')
 
     args = parser.parse_args()
 
@@ -266,8 +278,11 @@ def main():
     else:
         logging.error('Need either --nruns or --run argument.')
 
-    basename = filebasename(args.pdb)  # pdb file name without the extension.
-    psffile = os.path.join(os.path.dirname(args.pdb), '%s.psf' % basename)
+    if args.suffix:
+        # Separate the suffix in job name with underscore.
+        args.suffix = '_' + args.suffix
+
+    psffile = args.pdb[:-3] + 'psf'
     if not os.path.exists(psffile):
         raise IOError('File %s not found' % psffile)
 
@@ -275,7 +290,7 @@ def main():
         # Create a directory where we store the pdb, psf, and fep.tcl files, used
         # for this simulation run.
         # rundir name is added to job name.
-        rundir = os.path.join(CWD, '%s_run%d_%s' % (basename, run, args.suffix))
+        rundir = os.path.join(CWD, '%s_run%d%s' % (filebasename(args.pdb), run, args.suffix))
 
         if run >= len(RANDOM_INTS):
             raise ValueError('run number %d higher than our random int set size. '
@@ -303,7 +318,7 @@ def main():
         # where we want to save output from stdout and stderr for this job.
         joblogfile = os.path.join(rundir, 'namd.stdout')
 
-        job = create_job(jobname, fep, joblogfile, time=args.time, cores=args.cores)
+        job = create_job(jobname, fep, joblogfile, time=args.time, cores=args.cores, arid=args.arid)
         print('qsub %s' % job)
 
         # Also copy job to run dir, so we know which script we used for this simulation.
