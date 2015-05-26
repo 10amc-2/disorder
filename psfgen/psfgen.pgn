@@ -7,14 +7,13 @@ alias residue HIS HSD
 alias atom ILE CD1 CD
 segment A {
   auto angles dihedrals
-  pdb 2mx4_m1.pdb
+  pdb 2mx4_site1_extended.pdb
   first ACE
   last CT2
 }
-patch THP1 A:37
-patch THP1 A:46
+patch THP1 A:3
 regenerate angles
-coordpdb 2mx4_up1_extended.pdb A
+coordpdb 2mx4_site1_extended.pdb A
 guesscoord
 writepdb 2mx4_p1_extended.pdb
 writepsf 2mx4_p1_extended.psf
