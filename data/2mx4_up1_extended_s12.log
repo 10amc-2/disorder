@@ -1,5 +1,5 @@
-Running solvate with arguments: /home/jack/Code/disorder/data/2mx4_up1_extended_autopsf.psf /home/jack/Code/disorder/data/2mx4_up1_extended_autopsf.pdb -o 2mx4_up1_extended_s12 -s WT -rotate -rotsel { all } -rotinc 10 -x 12 -y 12 -z 12 +x 12 +y 12 +z 12 -b 2.4
-New volume is 1664.6542233767261
+Running solvate with arguments: /Users/shrirang/projects/disorder/data/2mx4_up1_extended.psf /Users/shrirang/projects/disorder/data/2mx4_up1_extended.pdb -o 2mx4_up1_extended_s12 -s WT -rotate -rotsel { all } -rotinc 10 -x 12 -y 12 -z 12 +x 12 +y 12 +z 12 -b 2.4
+New volume is 1664.6519913722307
 The system was rotated by 330.0 degrees around Z axis and 320.0 degrees around X axis.
 generating solute plus one replica of water...
 generating water residue lists...
