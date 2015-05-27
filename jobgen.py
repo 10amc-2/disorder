@@ -3,6 +3,7 @@
 import os
 import sys
 import tempfile
+import glob
 import logging
 
 from subprocess import Popen, PIPE
@@ -296,6 +297,40 @@ def create_fep(templatefep, dir, pdb, randomseed):
     return fep
 
 
+def get_rundir(pdb, run, suffix):
+    """Return directory to use for this simulation run.
+
+    Parameters
+    ----------
+    pdb : string
+        pdb file path.
+    run : int
+        run number. If 0 (or less than 0), this method finds all (say n) rundirs
+        corresponding to these parameters and uses run = n + 1.
+    suffix : string
+        suffix to use in run dir.
+
+    Returns
+    -------
+    rundir : string
+        path of run directory.
+    """
+    if run <= 0:
+        pattern = os.path.join(CWD, '%s_run*%s' % (filebasename(pdb), suffix))
+        files = glob.glob(pattern)
+        run = len(files) + 1
+    rundir = os.path.join(CWD, '%s_run%d%s' % (filebasename(pdb), run, suffix))
+
+    # If run directory already exists, back it up so we don't overwrite it.
+    if os.path.exists(rundir):
+        timestamp = int(datetime.now().timestamp())
+        shutil.move(rundir, '%s.%d.bak' % (rundir, timestamp))
+
+    # create new directory for this run
+    os.makedirs(rundir)
+    return rundir
+
+
 def main():
     parser = argparse.ArgumentParser(description='Script to generate jobs for simulations. '
                                      'The script saves job in ~/jobs directory and also '
@@ -342,7 +377,7 @@ def main():
     elif args.run:
         runs = [args.run]
     else:
-        logging.error('Need either --nruns or --run argument.')
+        runs = [-1]
 
     if args.suffix:
         # Separate the suffix in job name with underscore.
@@ -353,30 +388,21 @@ def main():
         raise IOError('File %s not found' % psffile)
 
     for run in runs:
-        # Create a directory where we store the pdb, psf, and fep.tcl files, used
+        # Get a directory where we store the pdb, psf, and fep.tcl files, used
         # for this simulation run.
         # rundir name is added to job name.
-        rundir = os.path.join(CWD, '%s_run%d%s' % (filebasename(args.pdb), run, args.suffix))
-
-        if run >= len(RANDOM_INTS):
-            raise ValueError('run number %d higher than our random int set size. '
-                             'Increase the random set the set.' % run)
-        randomseed = RANDOM_INTS[run]
-
-        # If run directory already exists, back it up so we don't overwrite it.
-        if os.path.exists(rundir):
-            timestamp = int(datetime.now().timestamp())
-            shutil.move(rundir, '%s.%d.bak' % (rundir, timestamp))
-
-        # create new directory for this run
-        os.makedirs(rundir)
+        rundir = get_rundir(args.pdb, run, args.suffix)
 
         # copy pdb and psf files to run directory
         for fname in [args.pdb, psffile]:
             newfname = os.path.join(rundir, os.path.basename(fname))
             shutil.copy(fname, newfname)
 
-        fep = create_fep(args.fep, rundir, args.pdb, randomseed)
+        if run >= len(RANDOM_INTS):
+            raise ValueError('run number %d higher than our random int set size. '
+                             'Increase the random set the set.' % run)
+
+        fep = create_fep(args.fep, rundir, args.pdb, RANDOM_INTS[run])
 
         # Job name, to show in qstat and on slack.
         jobname = 'dis_%s' % os.path.basename(rundir)
