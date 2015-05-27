@@ -101,16 +101,72 @@ def queue(time):
         return 'long'
 
 
+def string_after(line, after, till=[',', ' ', '\n']):
+    """Return string in line `after` substring until one of the `till' substrings."""
+    i = line.find(after)
+    if i == -1:
+        return ''
+    value = ''
+    for c in line[i+len(after):]:
+        if c in till:
+            break
+        else:
+            value += c
+    return value
+
+
+def ar_resources(arid):
+    """Return resources reserved in given arid.
+
+    Parameters
+    ----------
+    arid : int
+        ARID
+
+    Return
+    ------
+    vf : string
+        memory per thread
+    h_rt : int
+        time limit in seconds for the job
+    cores : int
+        number of assigned cores for this AR.
+    hostname : string
+        hostname requested in AR. If none is requested, '' is returned.
+    """
+    cmd = 'qrstat -ar %d' % arid
+    out, err = run_shell_command(cmd)
+    if not out:
+        raise ValueError('No AR found for %d' % arid)
+
+    for line in out.split('\n'):
+        if line.startswith('end_time'):
+            end_time = datetime.strptime(' '.join(line.split()[1:]), '%m/%d/%Y %H:%M:%S').timestamp()
+        elif line.startswith('resource_list'):
+            if line.find('hostname') > 0:
+                hostname = string_after(line, 'hostname=')
+            if line.find('virtual_free') > 0:
+                vf = string_after(line, 'virtual_free=')
+            if line.find('h_rt') > 0:
+                h_rt = int(string_after(line, 'h_rt='))
+        elif line.startswith('granted_parallel_environment'):
+            cores = int(string_after(line, 'smp slots '))
+
+    dt = end_time - datetime.now().timestamp() - 600
+    h_rt = min(h_rt, dt)
+    return vf, h_rt, cores, hostname
+
+
 JOB = """#!/bin/bash
 #$ -N %s
 #$ -cwd
 #$ -j y
 #$ -S /bin/bash
 #$ -pe smp %s
-#$ -l vf=2.0G
-#$ -l ironfs
+#$ -l vf=%s
+#$ -l %s
 #$ -l h_rt=%s
-#$ -q %s
+#$ -q medium,long
 %s
 
 # start the job with a random delay (< 1 min), so that we do not start simulations submitted together at the exact same time.
@@ -127,7 +183,7 @@ exit 0
 """
 
 
-def create_job(name, fep, joblogfile, time='24:00:00', cores=16, arid=None):
+def create_job(name, fep, joblogfile, time='24:00:00', cores=16, arid=None, mem='2G', hostname=None):
     """Create a job (.sh) to submit to anthill and save it in ~/jobs directory.
 
     Parameters
@@ -144,6 +200,10 @@ def create_job(name, fep, joblogfile, time='24:00:00', cores=16, arid=None):
         number of cores to request for this job.
     arid : int, optional, default None
         advanced reservation ID, if we have one.
+    mem : string, optional, default 2G
+        memory to use per thread
+    hostname : string, optional, default None
+        hostname to use. If None, '-l ironfs' is used instead
 
     Return
     ------
@@ -169,10 +229,16 @@ def create_job(name, fep, joblogfile, time='24:00:00', cores=16, arid=None):
 
     if arid:
         ar = '#$ -ar %d' % arid
+        mem, time, cores, hostname = ar_resources(arid)
     else:
         ar = ''
 
-    f.write(JOB % (name, cores, time, queue(time), ar, randtime, fep, joblogfile, joblogfile, logfile))
+    if hostname:
+        hostname = 'hostname=%s' % hostname
+    else:
+        hostname = 'ironfs'
+
+    f.write(JOB % (name, cores, mem, hostname, time, ar, randtime, fep, joblogfile, joblogfile, logfile))
     return f.name
 
 
