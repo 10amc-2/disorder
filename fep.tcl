@@ -15,6 +15,9 @@ set outname namdrun.namdout; # base name for output files
 # -- forcefield parameters
 paraTypeCharmm on
 parameters /home/anthill/cs86/students/lab2/par_all27_prot_na.prm
+parameters /home/anthill/jack/cs86/disorder/psfgen/par_all36_prot.prm
+parameters /home/anthill/jack/cs86/disorder/psfgen/par_all36_na.prm
+parameters /home/anthill/jack/cs86/disorder/psfgen/toppar_all36_prot_na_combined.str
 exclude scaled1-4
 1-4scaling 1
 cutoff 12
@@ -33,12 +36,6 @@ fullElectFrequency 1
 stepspercycle 10
 seed $randomseed; # random number generator seed
 
-# -- simulation parameters
-langevin on; # do Langevin dynamics?
-langevinDamping 5; # damping coefficient (gamma), e.g. 5/ps
-langevinTemp $temperature
-langevinHydrogen off; # couple Langevin bath to hydrogens?
-
 # -- io parameters
 outputName $outname
 outputEnergies 100; ###ENERGY_OUTPUT_FREQ
@@ -52,45 +49,6 @@ dcdfreq 100; ###DCD_OUTPUT_FREQ
 # cellOrigin -3.887061595916748 -0.13141199946403503 -0.6728770732879639
 wrapAll on
 
-# -- constant pressure parameters
-useGroupPressure yes
-useFlexibleCell no
-useConstantRatio no
-useConstantArea no
-langevinPiston on
-langevinPistonTarget 1.01325; # pressure in bar
-langevinPistonPeriod 100
-langevinPistonDecay 50
-langevinPistonTemp $temperature
-
-# -- make sure Ca/Mg ions are not diffusing away from the binding site
-# fixedAtoms     on
-# fixedAtomsFile ###FIXED_PDB_FILE
-# fixedAtomsCol  B
-
-# # -- FEP
-# alch                on
-# alchType            fep
-# alchFile            ###ALCHEMY_PDB_FILE
-# alchCol             B
-# alchOutfile         $outdir/fep.out
-# alchOutFreq         ###ALCHEMY_OUTPUT_FREQ
-# alchEquilSteps      ###ALCHEMY_EQUIL_STEPS
-# alchElecLambdaStart 1
-# alchVdwShiftCoeff   0.05
-# alchDecouple		on
-
-# # -- relax structure
-# alchLambda   0.0
-# alchLambda2  0.0
 minimize 1000; ###MINIMIZE_STEPS
 
-run 10000000; # 10 ns
-
-# # -- run FEP
-# set N 10
-# for {set i 0} {$i < $N} {incr i} {
-#   alchLambda  [expr $i*1.0/$N]
-#   alchLambda2 [expr ($i+1)*1.0/$N]
-#   run ###TOTAL_STEPS
-# }
+run 100000000; # 100 ns

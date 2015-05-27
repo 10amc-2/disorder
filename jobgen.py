@@ -167,7 +167,7 @@ JOB = """#!/bin/bash
 #$ -l vf=%s
 #$ -l %s
 #$ -l h_rt=%s
-#$ -q medium,long
+#$ -q short,medium,long
 %s
 
 # start the job with a random delay (< 1 min), so that we do not start simulations submitted together at the exact same time.
