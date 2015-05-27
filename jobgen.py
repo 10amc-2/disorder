@@ -158,7 +158,7 @@ def ar_resources(arid):
     return vf, h_rt, cores, hostname
 
 
-JOB = """#!/bin/bash
+JOB_MULTI_CORE = """#!/bin/bash
 #$ -N %s
 #$ -cwd
 #$ -j y
@@ -176,6 +176,28 @@ sleep %s
 echo "Got $NSLOTS slots on: " "`cat $PE_HOSTFILE`"
 
 /home/grigoryanlab/library/bin/charmrun +p$NSLOTS /home/grigoryanlab/library/bin/namd2 %s &> %s
+
+# create a sym link for this job's logfile in directory where it can be accessed by slackbot
+ln -s %s %s
+
+exit 0
+"""
+
+JOB_SINGLE_CORE = """#!/bin/bash
+#$ -N %s
+#$ -cwd
+#$ -j y
+#$ -S /bin/bash
+#$ -l vf=%s
+#$ -l %s
+#$ -l h_rt=%s
+#$ -q short,medium,long
+%s
+
+# start the job with a random delay (< 1 min), so that we do not start all simulations at the exact same time.
+sleep %s
+
+/home/anthill/cs86/students/bin/namd2-linux %s &> %s
 
 # create a sym link for this job's logfile in directory where it can be accessed by slackbot
 ln -s %s %s
@@ -239,7 +261,12 @@ def create_job(name, fep, joblogfile, time='24:00:00', cores=16, arid=None, mem=
     else:
         hostname = 'ironfs'
 
-    f.write(JOB % (name, cores, mem, hostname, time, ar, randtime, fep, joblogfile, joblogfile, logfile))
+    if cores > 1:
+        f.write(JOB_MULTI_CORE % (name, cores, mem, hostname, time, ar, randtime, fep, joblogfile, joblogfile, logfile))
+    elif cores == 1:
+        f.write(JOB_SINGLE_CORE % (name, mem, hostname, time, ar, randtime, fep, joblogfile, joblogfile, logfile))
+    else:
+        raise ValueError('Invalid cores value: %f' % cores)
     return f.name
 
 
