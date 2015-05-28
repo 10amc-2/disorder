@@ -51,4 +51,4 @@ wrapAll on
 
 minimize 1000; ###MINIMIZE_STEPS
 
-run 100000000; # 100 ns
+run 200000000; # 200 ns
