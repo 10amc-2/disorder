@@ -45,7 +45,10 @@ if sys.version_info[0] < 3:
 #####################################################################
 
 BASE_DIR = os.environ['HOME']
-CWD = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# If we want to store output on ironfs
+# OUTPUT_DIR = '/home/ironfs/scratch/shrirang/projects/disorder'
 
 # 40 random ints generated using numpy.random.random_integers(1, 10000, 40)
 RANDOM_INTS = [6012, 7146, 1572, 5017, 4932, 3200, 8521, 1315, 2002, 7949, 9286,
@@ -222,7 +225,9 @@ def create_job(name, fep, joblogfile, time='24:00:00', cores=16, arid=None, mem=
     cores : int, optional, default 16
         number of cores to request for this job.
     arid : int, optional, default None
-        advanced reservation ID, if we have one.
+        Advanced Reservation ID (ARID), if we have one.
+        If an ARID is given, the resources for this job are set to the resources
+        mentioned in the ARID.
     mem : string, optional, default 2G
         memory to use per thread
     hostname : string, optional, default None
@@ -343,10 +348,10 @@ def get_rundir(pdb, run, suffix):
         path of run directory.
     """
     if run <= 0:
-        pattern = os.path.join(CWD, '%s_run*%s' % (filebasename(pdb), suffix))
+        pattern = os.path.join(OUTPUT_DIR, '%s_run*%s' % (filebasename(pdb), suffix))
         files = glob.glob(pattern)
         run = len(files) + 1
-    rundir = os.path.join(CWD, '%s_run%d%s' % (filebasename(pdb), run, suffix))
+    rundir = os.path.join(OUTPUT_DIR, '%s_run%d%s' % (filebasename(pdb), run, suffix))
 
     # If run directory already exists, back it up so we don't overwrite it.
     if os.path.exists(rundir):
