@@ -1,0 +1,139 @@
+%
+% Top level latex file.
+%
+% Author: David Kotz
+% Modified by: Shrirang Mare
+%
+%
+% Submission instruction: Uncomment line # 9 '\submittrue'
+
+
+\newif\ifsubmit
+\submitfalse
+%\submittrue           % uncomment this line for submission. LMAKE-SUBMIT
+
+
+\documentclass{article}     % CHANGEME. Use conference specific style file
+
+\usepackage[nolist]{acronym}  % handy package to manage acroymns.
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{cite}
+\usepackage{fullpage}
+\usepackage{microtype}  % keeps words from spilling outside column
+\usepackage{graphicx}
+\usepackage{siunitx}    % useful for writing numbers and units.
+\usepackage{times}
+\usepackage{url}
+\usepackage{xspace} 		% removes excess spaces after macros
+
+
+\usepackage[pdftex, bookmarks=true]{hyperref} % creates bookmarks and hyperlinks within the pdf
+\hypersetup{              % configure hyperref
+  pdfcreator={git-commit: LMAKE-GIT-COMMIT},
+	bookmarksnumbered=true,
+  colorlinks=true,        % false: boxed links; true: colored links
+  citecolor=black,        % color of links to bibliography
+  filecolor=black,        % color of file links
+  linkcolor=black,        % color of internal links
+  urlcolor=black,         % blue
+  bookmarksopen=true,
+  pdfpagemode=UseNone,   % no bookmarks shown when file opened
+	breaklinks=true,
+	pdfstartview={FitH},
+}
+
+\pdfcompresslevel=9       % highly compressed pdf
+\pagenumbering{arabic}    % Add page numbers
+
+
+% Footnotes without footnote numbers
+\newcommand{\footnotenonumber}[1]{{\def\thempfn{}\footnotetext{#1}}}
+
+\newcommand{\figref}[1]{Figure~\ref{f:#1}}
+% insert a narrow (1-column) figure, using the filename for the ref key.
+% size is a fraction of linewidth, typically 0.9 or 1.0
+% \addfigure{filename without ext}{size}{caption}
+\newcommand{\addfigure}[3]{
+\begin{figure}[tbp] %[tbp]
+\centerline{\resizebox{#2\linewidth}{!}{\includegraphics{figs/#1}}}
+\caption{\label{f:#1}#3}
+\end{figure}
+}
+% insert a wide (2-column) figure, using the filename for the ref key.
+% size is a fraction of textwidth, typically 0.9 or 1.0
+% \addwidefigure{filename without ext}{size}{caption}
+\newcommand{\addwidefigure}[3]{
+\begin{figure*}[tbp] %[tbp]
+\centerline{\resizebox{#2\textwidth}{!}{\includegraphics{figs/#1}}}
+\caption{\label{f:#1}#3}
+\end{figure*}
+}
+
+\ifsubmit
+  \newcommand{\note}[1]{\relax}
+  \newcommand{\comment}[2]{\relax}
+  \newcommand{\todo}[1]{\relax}
+\else
+  \definecolor{commentcolor}{RGB}{0,128,255}
+  \newcommand{\note}[1]{\textcolor{commentcolor}{(#1)}}
+  \newcommand{\comment}[2]{\textcolor{commentcolor}{(#2 \emph{--#1})}}
+  \newcommand{\todo}[1]{\textcolor{commentcolor}{(TODO: #1)}}
+\fi
+
+
+%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\title{Sample title}  % CHANGEME
+
+\author{Author1 and Author2\\  % CHANGEME
+}
+
+
+\date{}
+
+\maketitle
+
+\ifsubmit
+\else
+[\textbf{NOTE:} DRAFT]
+
+[\textbf{NOTE:} git revision: LMAKE-GIT-COMMIT]
+
+[\textbf{NOTE:} LMAKE-GIT-STATUS]
+
+\fi
+
+\input{abstract}
+
+\ifsubmit
+\else
+
+\textbf{Latex template usage info:}
+
+A comment is written using the comment macro: $\backslash$comment\{shri\}\{This is a comment\}. It is displayed as:
+
+\comment{shri}{This is a comment}
+
+
+ToDos are written as $\backslash$todo\{Write abstract.\}. They appear as :
+
+\todo{Write abstract.}
+
+Comments and TODO are shown when paper is built in draft mode (which is the default mode). In submit mode they are hidden. To build paper in submit mode, set submit variable to true (uncomment line 13) in main.tex or if you are using lmake.py to build run it as \texttt{./lmake.py --submit}.
+\fi
+
+\input{intro}
+\input{related}
+\input{hypothesis}
+\input{method}
+\input{results}
+\input{discuss}
+\input{conclusion}
+
+\bibliographystyle{abbrvDOI.bst}
+\bibliography{refs}
+
+\end{document}
