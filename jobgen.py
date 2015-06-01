@@ -48,7 +48,9 @@ BASE_DIR = os.environ['HOME']
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # If we want to store output on ironfs
-# OUTPUT_DIR = '/home/ironfs/scratch/shrirang/projects/disorder'
+OUTPUT_DIR = '/home/ironfs/scratch/%s/projects/disorder' % os.environ['USER']
+if not os.path.exists('/home/ironfs/scratch'):
+    raise IOError('Cannot access /home/ironfs/scratch')
 
 # 40 random ints generated using numpy.random.random_integers(1, 10000, 40)
 RANDOM_INTS = [6012, 7146, 1572, 5017, 4932, 3200, 8521, 1315, 2002, 7949, 9286,
