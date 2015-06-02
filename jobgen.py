@@ -327,6 +327,8 @@ def create_fep(templatefep, dir, pdb, randomseed):
                     line = 'set pdbfile %s.pdb;\n' % basename
                 elif line.startswith('###CELLVECTORS'):
                     line = '%s\n' % cellvectors
+                elif line.startswith('set alchpdbfile'):
+                	line = 'set alchpdbfile %s_alch.pdb;\n' % basename
                 fout.write(line)
     return fep
 
@@ -381,7 +383,7 @@ def main():
                         type=str,
                         required=True,
                         default=None,
-                        help='Template fep.tcl file')
+                        help='Template tcl file')
     parser.add_argument('--pdb',
                         type=str,
                         required=True,

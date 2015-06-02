@@ -3,7 +3,6 @@
 set randomseed ###RANDOM_SEED
 set psffile ###PSF_FILE
 set pdbfile ###PDB_FILE
-set alchpdbfile ###ALCH_PDB_FILE
 
 # -- structure parameters
 structure $psffile
@@ -50,26 +49,6 @@ dcdfreq 100; ###DCD_OUTPUT_FREQ
 # cellOrigin -3.887061595916748 -0.13141199946403503 -0.6728770732879639
 wrapAll on
 
-# -- FEP
-alch                on
-alchType            fep
-alchFile            $alchpdbfile
-alchCol             B
-alchOutfile         namdrun.fepout
-alchOutFreq         5
-alchEquilSteps      5000
-alchElecLambdaStart 1
-alchVdwShiftCoeff   0.05
+minimize 1000; ###MINIMIZE_STEPS
 
-# -- relax structure
-alchLambda   0.0
-alchLambda2  0.0
-minimize 1000
-
-# -- run FEP
-set N 10
-for {set i 0} {$i < $N} {incr i} {
-  alchLambda  [expr $i*1.0/$N]
-  alchLambda2 [expr ($i+1)*1.0/$N]
-  run 200000000; # 200 ns
-}
+run 200000000; # 200 ns
