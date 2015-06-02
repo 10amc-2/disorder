@@ -71,5 +71,5 @@ set N 10
 for {set i 0} {$i < $N} {incr i} {
   alchLambda  [expr $i*1.0/$N]
   alchLambda2 [expr ($i+1)*1.0/$N]
-  run 200000000; # 200 ns
+  run 2000000; # 2 ns
 }
