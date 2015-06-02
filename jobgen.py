@@ -329,6 +329,8 @@ def create_fep(templatefep, dir, pdb, randomseed):
                     line = '%s\n' % cellvectors
                 elif line.startswith('set alchpdbfile'):
                 	line = 'set alchpdbfile %s_alch.pdb;\n' % basename
+                elif line.startswith('set fixedpdbfile'):
+                	line = 'set fixedpdbfile %s_fixed.pdb;\n' % basename
                 fout.write(line)
     return fep
 
