@@ -47,10 +47,11 @@ if sys.version_info[0] < 3:
 BASE_DIR = os.environ['HOME']
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# If we want to store output on ironfs
-OUTPUT_DIR = '/home/ironfs/scratch/%s/projects/disorder' % os.environ['USER']
-if not os.path.exists('/home/ironfs/scratch'):
-    raise IOError('Cannot access /home/ironfs/scratch')
+if os.environ['HOME'].find('anthill') >= 0:
+    # If we want to store output on ironfs
+    OUTPUT_DIR = '/home/ironfs/scratch/%s/projects/disorder' % os.environ['USER']
+    if not os.path.exists('/home/ironfs/scratch'):
+        raise IOError('Cannot access /home/ironfs/scratch')
 
 # 40 random ints generated using numpy.random.random_integers(1, 10000, 40)
 RANDOM_INTS = [6012, 7146, 1572, 5017, 4932, 3200, 8521, 1315, 2002, 7949, 9286,
@@ -425,6 +426,10 @@ def main():
     if not os.path.exists(psffile):
         raise IOError('File %s not found' % psffile)
 
+    alchpdbfile = args.pdb[:-4] + '_alch.pdb'
+    if not os.path.exists(alchpdbfile):
+        raise IOError('File %s not found' % alchpdbfile)
+
     for run in runs:
         # Get a directory where we store the pdb, psf, and fep.tcl files, used
         # for this simulation run.
@@ -432,7 +437,7 @@ def main():
         rundir = get_rundir(args.pdb, run, args.suffix)
 
         # copy pdb and psf files to run directory
-        for fname in [args.pdb, psffile]:
+        for fname in [args.pdb, psffile, alchpdbfile]:
             newfname = os.path.join(rundir, os.path.basename(fname))
             shutil.copy(fname, newfname)
 
