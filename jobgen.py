@@ -430,6 +430,10 @@ def main():
     if not os.path.exists(alchpdbfile):
         raise IOError('File %s not found' % alchpdbfile)
 
+    fixedpdbfile = args.pdb[:-4] + '_fixed.pdb'
+    if not os.path.exists(fixedpdbfile):
+        raise IOError('File %s not found' % fixedpdbfile)
+
     for run in runs:
         # Get a directory where we store the pdb, psf, and fep.tcl files, used
         # for this simulation run.
@@ -437,7 +441,7 @@ def main():
         rundir = get_rundir(args.pdb, run, args.suffix)
 
         # copy pdb and psf files to run directory
-        for fname in [args.pdb, psffile, alchpdbfile]:
+        for fname in [args.pdb, psffile, alchpdbfile, fixedpdbfile]:
             newfname = os.path.join(rundir, os.path.basename(fname))
             shutil.copy(fname, newfname)
 
