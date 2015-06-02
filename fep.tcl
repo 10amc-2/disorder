@@ -37,6 +37,12 @@ fullElectFrequency 1
 stepspercycle 10
 seed $randomseed; # random number generator seed
 
+# -- simulation parameters
+langevin on; # do Langevin dynamics?
+langevinDamping 5; # damping coefficient (gamma), e.g. 5/ps
+langevinTemp $temperature
+langevinHydrogen off; # couple Langevin bath to hydrogens?
+
 # -- io parameters
 outputName $outname
 outputEnergies 100; ###ENERGY_OUTPUT_FREQ
