@@ -60,6 +60,7 @@ alchOutFreq         5
 alchEquilSteps      5000
 alchElecLambdaStart 1
 alchVdwShiftCoeff   0.05
+alchDecouple		yes
 
 # -- relax structure
 alchLambda   0.0
