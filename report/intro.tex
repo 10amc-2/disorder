@@ -14,4 +14,13 @@ Our hypothesis -- what we are trying to test in this project.
 
 Add protein figures.
 
+
+Bah et al examined the relationship between PTMs, protein folding and protein protein interactions in 4ebp2 a binding partner of eif4.
+Using NMR, isothermal titration calorimetry and mutagenesis, they measured the structure and binding affinity for eif4 of phosphorylated and unphosphorylated 4ebp2 as well as 4ebp2 with several combinations of phosphomimetic mutations.
+In doing so, they ascertained that two key threonine phosphorylations were necessary and sufficient for a unstructured to beta sheet transition in the eif4 binding domain of the 4eb2.
+Interestingly both of these sites exhibit a TPGGT motif with the first threonine being phosphorylated and forming a hydrogen bond with the second.
+Together they induce folding of the eif4 binding domain into a beta sheet and sequester the YXXXXL eif4 binding motif reducing binding affinity by about two orders of magnitude.
+This is an important advance in our understanding of PTM modulation of protein function which is potentially at work in many systems.
+The authors note that, “Large structural changes such as folding could sequester or enhance the accessibilities of protein binding and other PTM sites or provide new interaction surfaces, thereby expanding signalling output,” as well as pointing out the potential value of targeted small molecule inhibition of PTM induced folding.  In light of this significant finding, we wanted to apply computational techniques in an attempt to replicate and then generalize it in silico. Since both phosphosites showed an identical motif, we chose to investigate how folding could be induced by phosphorylation on the local scale of a few amino acids.   Using MD, we simulated peptides both with and without phosphorylation starting in both the native and extended conformations.  We also performed FEP of 4ebp2 between its unphosphorylated and phosphorylated forms in both extended and native conformations.  By performing both of these simulations, we hoped to build a solid case for whether this phosphorylation induced conformational switch, known to occur in vivo, could be modeled in silico.  The pattern of multiple phosphosites, a subset of which act in concert, seen on 4ebp2 is common to many IDPs introducing a combinatorial level of complexity into ascertaining their function. Therefore, computational modeling of PTM mediated unstructured-structured transitions could provide a valuable means of narrowing the search space for experimental methods.  Knowledge gained about the role of PTMs in determining conformation could also provide a valuable addition to the tool set of protein design.
+
 % section introduction (end)
