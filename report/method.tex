@@ -27,7 +27,7 @@ The dephosphorylated version of the fragment was created by removing the phospha
 \texttt{VMD}'s autopsf tool automatically added a hydrogen to the hydroxyl group of the unphosphorylated T37.
 
 \subsection{Creating the extended versions of the fragment}
-We used PyRosetta to generate an extended fragment with the same sequence as the NMR structure, CTTPGTLF (see Figure~\ref{fig:2MX4_p1_extended}).
+We used PyRosetta to generate an extended fragment with the same sequence as the NMR structure, CTTPGTLF.
 To create an extended fragment with a phosphorylated threonine, we used the patch functionality of \texttt{psfgen}.
 Because the bond lengths of the phosphate ion in the patched phosphothreonine were not generated correctly,
 we ran 1000 steps of minimization before all simulations involving this extended fragment so that the oxygen atoms could adjust to their natural positions.
