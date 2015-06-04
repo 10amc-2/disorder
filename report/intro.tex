@@ -2,18 +2,9 @@
 \section{Introduction} % (fold)
 \label{sec:introduction}
 
-Introduction to IDP
-
-Introduction to phosphorylation.
-
-Introduction to MD.
-
-Project idea -- what we are trying to do.
-
-Our hypothesis -- what we are trying to test in this project.
-
-Add protein figures.
-
+Phosphorylation is one of the most common post-translational modifications of proteins, involving the addition of a phosphate group to an amino acid.
+Several amino acids are naturally phosphorylated although the modification most frequently occurs on serine and threonine.
+Since the phosphate group is both relatively large and negatively charged, phosphorylation can drastically alter both the conformation and binding affinity of modified proteins.
 
 Intrinsically Disordered Proteins (IDPs) are proteins which do not exhibit stable structures but rather are ensembles of a wide variety of conformations.
 IDPs play an important role in cell signaling among other processes and have recently gained increased attention as tools for investigating them have improved.
@@ -32,6 +23,16 @@ In doing so, they ascertained that two key threonine phosphorylations were neces
 Interestingly both of these sites exhibit a TPGGT motif with the first threonine being phosphorylated and forming a hydrogen bond with the second.
 Together they induce folding of the eif4 binding domain into a beta sheet and sequester the YXXXXL eif4 binding motif reducing binding affinity by about two orders of magnitude.
 This is an important advance in our understanding of PTM modulation of protein function which is potentially at work in many systems.
-The authors note that, “Large structural changes such as folding could sequester or enhance the accessibilities of protein binding and other PTM sites or provide new interaction surfaces, thereby expanding signalling output,” as well as pointing out the potential value of targeted small molecule inhibition of PTM induced folding.  In light of this significant finding, we wanted to apply computational techniques in an attempt to replicate and then generalize it in silico. Since both phosphosites showed an identical motif, we chose to investigate how folding could be induced by phosphorylation on the local scale of a few amino acids.   Using MD, we simulated peptides both with and without phosphorylation starting in both the native and extended conformations.  We also performed FEP of 4ebp2 between its unphosphorylated and phosphorylated forms in both extended and native conformations.  By performing both of these simulations, we hoped to build a solid case for whether this phosphorylation induced conformational switch, known to occur in vivo, could be modeled in silico.  The pattern of multiple phosphosites, a subset of which act in concert, seen on 4ebp2 is common to many IDPs introducing a combinatorial level of complexity into ascertaining their function. Therefore, computational modeling of PTM mediated unstructured-structured transitions could provide a valuable means of narrowing the search space for experimental methods.  Knowledge gained about the role of PTMs in determining conformation could also provide a valuable addition to the tool set of protein design.
+The authors note that, “Large structural changes such as folding could sequester or enhance the accessibilities of protein binding and other PTM sites or provide new interaction surfaces, thereby expanding signalling output,” as well as pointing out the potential value of targeted small molecule inhibition of PTM induced folding.
+
+
+In light of this significant finding, we wanted to apply computational techniques in an attempt to replicate and then generalize it in silico.
+Since both phosphosites showed an identical motif, we chose to investigate how folding could be induced by phosphorylation on the local scale of a few amino acids.
+Using MD, we simulated peptides both with and without phosphorylation starting in both the native and extended conformations.
+We also performed FEP of 4ebp2 between its unphosphorylated and phosphorylated forms in both extended and native conformations.
+By performing both of these simulations, we hoped to build a solid case for whether this phosphorylation induced conformational switch, known to occur in vivo, could be modeled in silico.
+The pattern of multiple phosphosites, a subset of which act in concert, seen on 4ebp2 is common to many IDPs introducing a combinatorial level of complexity into ascertaining their function.
+Therefore, computational modeling of PTM mediated unstructured-structured transitions could provide a valuable means of narrowing the search space for experimental methods.
+Knowledge gained about the role of PTMs in determining conformation could also provide a valuable addition to the tool set of protein design.
 
 % section introduction (end)
