@@ -71,4 +71,24 @@ Different TCL parameters were used for the free energy perturbation simulations.
 The additional parameters remain largely unchanged from those used in Lab 2;
 a Langevin thermostat was added, there were 5000 steps of equilibration, and each of the ten FEP iterations ran for 2 nanoseconds.
 
+
+\subsection{Automating simulation submission} % (fold)
+\label{sub:automating_simulation_submission}
+
+We developed a python script that takes input parameters such as the pdb file, template tickle script, time limit for the job, number of cores to use, any suffix to add to the job name, and advanced reservation ID, if available.
+If ARID is given, the script fetches the resources from the ARID and uses those the job.
+The script creates a separate directory for the simulation, copies the required pdb files, and generates a tickle file from the template file, filling in the parameters (input, output file names, pdb cell vector sizes, etc).
+The script also creates a job bash script to submit to anthill and outputs its path, enabling us to submit jobs with different parameters with a online command.
+
+Running a simulation with multiple cores gives significant speed improvements.
+On anthill, however, jobs that require 16 cores take long time to get scheduled if there are other single-core jobs in queue.
+After our 16-core jobs were still in `pending' status after 1 day, we decided to use the advanced reservation on anthill\cite{anthill-ar}.
+Reserving and running jobs correctly with advanced reservation is not straight forward.
+We cannot reserve nodes with `ironfs' access in advance, because `ironfs' is dynamic load resource, which tests for ironfs at the time of scheduling jobs, so the advance reservation system cannot know ahead of time.
+When submitting jobs with an advanced reservation ID (ARID), the job's resource request should match exactly with that of the ARID, otherwise the job is not accepted by the scheduler.
+Without the `-l ironfs' request, the simulation runs twice as slow.
+As a workaround we used `-l hostname=gridiron*' request in ARID, as those nodes most of the time have access to ironfs\cite{tim:email}.
+
+% subsection automating_simulation_submission (end)
+
 % section methods (end)
