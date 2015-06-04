@@ -22,6 +22,17 @@ which is comprised of all $\phi/\psi$ in all simulations, divided into phosphory
 The phosphorylated peptide sampled a narrower range of $\phi/\psi$ angles than its unphosphorylated counterpart,
 suggesting that the structure imposed by the phosphorylation restricts the favorable conformations of the fragment.
 
+The structure-imposing effects can be further seen in the distance between T37 and T41;
+\figref{distances} plots the distance over time between
+\begin{enumerate} \itemsep 1pt
+  \item the phosphate H atom of T37 and hydroxyl H atom of T41
+  \item the C$\alpha$ atom of T37 and the C$\alpha$ atom of T41
+\end{enumerate}
+In the phosphorylated fragment, the distance between the H bonds and C$\alpha$ bonds remains nearly constant throughout the simulation.
+In contrast, in the unphosphorylated fragment the distances vary considerably.
+Some of the fluctuation in the H bond distances is from thermal fluctuations but the C$\alpha$ variation confirms that there is significant variation.
+It is thus likely that the phosphate ion of T37 bonds with the hydroxyl group of T41, helping to maintain a constant distance between the two residues.
+
 % Data for this figure came from:
 % 2mx4_up1_extended_s10_run1
 % 2mx4_up1_s10_run1_spm8
@@ -39,6 +50,11 @@ suggesting that the structure imposed by the phosphorylation restricts the favor
 % Data for this figure came from:
 % 2mx4_up1_extended_s10_run1
 \addwidefigure{unphosphorylated_extended_states}{1}{Conformations of unphosphorylated extended structure at different stages of simulation.}
+
+% Data for this figure came from:
+% 2mx4_up1_s8
+% 2mx4_p1_s8
+\addwidefigure{distances}{1}{The distances over time between T37 and T41 in phosphorylated and unphosphorylated simulations with an 8{\AA} solvation box.}
 
 % Figures: bond distances vs time for all simulations
 
