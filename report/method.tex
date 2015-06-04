@@ -27,7 +27,7 @@ The dephosphorylated version of the fragment was created by removing the phospha
 \texttt{VMD}'s autopsf tool automatically added a hydrogen to the hydroxyl group of the unphosphorylated T37.
 
 \subsection{Creating the extended versions of the fragment}
-We used PyRosetta to generate an extended fragment with the same sequence as the NMR structure, CTTPGTLF.
+We used PyRosetta to generate an extended fragment with the same sequence as the NMR structure, CTTPGTLF (see Figure~\ref{fig:2MX4_p1_extended}).
 To create an extended fragment with a phosphorylated threonine, we used the patch functionality of \texttt{psfgen}.
 Because the bond lengths of the phosphate ion in the patched phosphothreonine were not generated correctly,
 we ran 1000 steps of minimization before all simulations involving this extended fragment so that the oxygen atoms could adjust to their natural positions.
@@ -57,6 +57,11 @@ All fragments were solvated using \texttt{VMD}'s solvation box tool before they 
 We tried solvation boxes of size 8\AA, 10\AA, and 12{\AA} since we did not know exactly how much solvent was required to avoid wrap-around effects.
 The fragments were rotated to minimize volume.
 
+\subsection{Free energy perturbation}
+FEP was performed by starting with an unphosphorylated T37 and alchemically adding the phosphate group.
+We tested two different versions: one in which an atom on each end of the peptide was fixed and one without any atoms fixed.
+The fixed version was designed to prevent any accidental folding before alchemical transformation completed.
+
 \subsection{File naming conventions}
 Because we generated so many different versions of the fragment, we adopted consistent naming conventions for the files.
 The first part of each file is \texttt{2mx4},
@@ -70,5 +75,9 @@ The TCL parameters for the \texttt{NAMD} simulations remain largely unchanged fr
 Each step was a femtosecond and energies were printed every 100 steps.
 Simulations were minimized for 1000 steps.
 Each simulation ran for a different amount of time depending on cluster availability and time constraints.
+
+Different TCL parameters were used for the free energy perturbation simulations.
+The additional parameters remain largely unchanged from those used in Lab 2;
+a Langevin thermostat was added, there were 5000 steps of equilibration, and each of the ten FEP iterations ran for 2 nanoseconds.
 
 % section methods (end)
