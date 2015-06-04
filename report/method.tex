@@ -8,14 +8,9 @@ and has PDB ID \href{http://www.rcsb.org/pdb/explore/explore.do?structureId=2MX4
 Because 2MX4 includes 62 residues, we chose to simulate only a portion of the protein centered around one of the phosphorylated threonines, T37.
 The full structure includes two known phosphothreonine sites, T37 and T46.
 The fragment used in the simulations includes two residues before T37 and six after, comprising a nonamer with the sequence CTTPGTLF.
-It extends to both ends of the loop in which T37 resides, as seen in Figure~\ref{fig:2MX4}.
+It extends to both ends of the loop in which T37 resides, as seen in \figref{2MX4}.
 
-\begin{figure}[h!]
-  \caption{2MX4 in PyMOL. The fragment containing T37 used in the simulations is highlighted in green sticks.}
-  \centering
-    \includegraphics[width=0.5\textwidth]{2MX4}
-  \label{fig:2MX4}
-\end{figure}
+\addfigure{2MX4}{1.0}{2MX4 in PyMOL. The fragment containing T37 used in the simulations is highlighted in green sticks.}
 
 \subsection{Capping the terminii}
 Because the fragment does not have the same terminii as a native peptide, we capped the ends to mitigate unrealistic interactions.
@@ -27,17 +22,12 @@ The dephosphorylated version of the fragment was created by removing the phospha
 \texttt{VMD}'s autopsf tool automatically added a hydrogen to the hydroxyl group of the unphosphorylated T37.
 
 \subsection{Creating the extended versions of the fragment}
-We used PyRosetta to generate an extended fragment with the same sequence as the NMR structure, CTTPGTLF (see Figure~\ref{fig:2MX4_p1_extended}).
+We used PyRosetta to generate an extended fragment with the same sequence as the NMR structure, CTTPGTLF (see \figref{2MX4_p1_extended}).
 To create an extended fragment with a phosphorylated threonine, we used the patch functionality of \texttt{psfgen}.
 Because the bond lengths of the phosphate ion in the patched phosphothreonine were not generated correctly,
 we ran 1000 steps of minimization before all simulations involving this extended fragment so that the oxygen atoms could adjust to their natural positions.
 
-\begin{figure}[h!]
-  \caption{The phosphorylated, extended fragment in PyMOL. Note the improper bond lengths in the phosphate ion that must be related with minimization.}
-  \centering
-    \includegraphics[width=0.5\textwidth]{2MX4_p1_extended}
-  \label{fig:2MX4_p1_extended}
-\end{figure}
+\addfigure{2MX4_p1_extended}{1.0}{The phosphorylated, extended fragment in PyMOL. Note the improper bond lengths in the phosphate ion that must be related with minimization.}
 
 \subsection{Generating the PSF files}
 We generated PSF files using either the \texttt{psfgen} command-line tool or \texttt{VMD}'s autopsf, depending on our needs.
