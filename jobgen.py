@@ -81,6 +81,13 @@ def get_vols(pdb):
     out, err = run_shell_command(cmd)
     # if out == '':
     #     raise ValueError('Could not find cell vectors for the solvated pdb.')
+    lines = out.split('\n')
+    for i in range(3):
+    	cells = lines[i].split(' ')
+    	value = float(cells[i+1])
+    	cells[i+1] = str(value - 1.5)
+    	lines[i] = ' '.join(cells)
+    out = '\n'.join(lines)
     return out
 
 
