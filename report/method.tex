@@ -3,7 +3,7 @@
 \label{sec:methods}
 
 \subsection{Producing the fragment PDB file}
-The NMR structure of 4EBP2 used in this project is the same as in Bah \textit{et al.}
+The NMR structure of 4ebp2 used in this project is the same as in Bah \textit{et al.}
 and has PDB ID \href{http://www.rcsb.org/pdb/explore/explore.do?structureId=2MX4}{\textcolor{blue}{2MX4}}.
 Because 2MX4 includes 62 residues, we chose to simulate only a portion of the protein centered around one of the phosphorylated threonines, T37.
 The full structure includes two known phosphothreonine sites, T37 and T46.
@@ -12,8 +12,8 @@ It extends to both ends of the loop in which T37 resides, as seen in \figref{2MX
 
 \addfigure{2MX4}{1.0}{2MX4 in PyMOL. The fragment containing T37 used in the simulations is highlighted in green sticks.}
 
-\subsection{Capping the terminii}
-Because the fragment does not have the same terminii as a native peptide, we capped the ends to mitigate unrealistic interactions.
+\subsection{Capping the termini}
+Because the fragment does not have the same termini as a native peptide, we capped the ends to mitigate unrealistic interactions.
 For all versions of the fragment simulated, the N-terminus was acetylated and the C-terminus was methylamidated.
 These caps were added with \texttt{psfgen} using the ACE and CT2 modifications on the N- and C-terminus, respectively.
 

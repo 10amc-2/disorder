@@ -4,36 +4,44 @@
 
 % Get stats (bond distances and angles) from the 4 simulations.
 
-
+In order to evaluate the simulations, we made several measurements for each simulation and compared these measurements across the different versions.
 \figref{unphosphorylated_bond3} shows the distance between termini for the unphosphorylated fragments starting with extended and native conformations.
-The unphosphorylated extended structure folds during the simulation but does not conform to a stable state.
-\figref{unphosphorylated_extended_states} shows conformations of unphosphorylated extended structure at different stages of simulation.
+The unphosphorylated extended structure folds during the simulation but does not conform to a stable state,
+the distance between its termini varying significantly over time.
+In contrast, \figref{phosphorylated_bond3} shows that neither the extended nor native peptide changed conformation signifantly;
+the distance between the termini remained constant throughout both simulations.
+This could be due to the stabilizing effect of phosphorylation or simply because the simulation was not run long enough.
+The simulations that produced these figures used a 10{\AA} solvation box.
 
-\figref{phosphorylated_bond3} shows the distance between termini for phosphorylated fragments starting with extended and native conformations.
+\figref{unphosphorylated_extended_states} shows the conformations of unphosphorylated extended structure at different stages of simulation.
+The structure samples a variety of conformations ranging from largely extended to compact, with T37 and T41 briefly coming close and then separating again.
 
-\todo{Add more description for these plots.}
+To determine whether or not the phosphorylation of T37 affected the secondary structure of the fragment,
+we calculated the $\phi/\psi$ angles of multiple residues in the peptide, as shown in \figref{ramachandran_native_s8},
+which is comprised of all $\phi/\psi$ in all simulations, divided into phosphorylated and unphosphorylated simulations.
+The phosphorylated peptide sampled a narrower range of $\phi/\psi$ angles than its unphosphorylated counterpart,
+suggesting that the structure imposed by the phosphorylation restricts the favorable conformations of the fragment.
 
 % Data for this figure came from:
 % 2mx4_up1_extended_s10_run1
 % 2mx4_up1_s10_run1_spm8
 \addwidefigure{unphosphorylated_bond3}{1}{Distance between termini for unphosphorylated fragments starting with extended and native conformations.}
 
-
 % Data for this figure came from:
 % 2mx4_p1_extended_s10_run1_c1
 % 2mx4_p1_s10_run1_c1
 \addwidefigure{phosphorylated_bond3}{1}{Distance between termini for phosphorylated fragments starting with extended and native conformations.}
 
+% Data for this figure came from:
+% all simulations
+\addwidefigure{ramachandran_native_s8}{1}{Each dot is a $\phi/\psi$ angle of residue taken at a different time point in some simulation.}
 
 % Data for this figure came from:
 % 2mx4_up1_extended_s10_run1
 \addwidefigure{unphosphorylated_extended_states}{1}{Conformations of unphosphorylated extended structure at different stages of simulation.}
 
-
 % Figures: bond distances vs time for all simulations
 
 % Figures: angles vs time for all simulations
-
-Figures: distributions for bonds and angles for all simulations
 
 % section results (end)
